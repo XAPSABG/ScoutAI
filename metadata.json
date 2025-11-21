@@ -1,0 +1,5 @@
+{
+  "name": "ScoutAI - Football Card Generator",
+  "description": "Generates detailed football (soccer) player cards with attributes estimated by Gemini AI based on real-world search data.",
+  "requestFramePermissions": []
+}
