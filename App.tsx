@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Search, Shield, Database, ExternalLink, ChevronDown, ChevronUp, Sparkles, Plane, Flag, GraduationCap, History } from 'lucide-react';
+import { Search, Shield, Database, ExternalLink, ChevronDown, ChevronUp, Sparkles, Plane, Flag, GraduationCap, ArrowLeft } from 'lucide-react';
 import { generatePlayerCard } from './services/geminiService';
 import FootballCard from './components/FootballCard';
 import StatRadar from './components/StatRadar';
@@ -37,6 +37,11 @@ const App: React.FC = () => {
     }
   }, [searchQuery]);
 
+  const resetSearch = () => {
+    setState({ data: null, isLoading: false, error: null });
+    setSearchQuery('');
+  };
+
   const toggleCategory = (category: string) => {
     setExpandedCategory(expandedCategory === category ? null : category);
   };
@@ -48,25 +53,40 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-hex-pattern bg-fixed text-gray-100 font-sans selection:bg-gold-500 selection:text-black flex flex-col">
       
       {/* Navigation Bar */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${hasData ? 'bg-card-dark/90 backdrop-blur-lg border-b border-gray-800 shadow-lg' : 'bg-transparent py-4'}`}>
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => { setState({data:null, isLoading:false, error:null}); setSearchQuery(''); }}>
-            <Shield className="text-gold-500 fill-gold-500/20" size={28} />
-            <div>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${hasData ? 'bg-card-dark/95 backdrop-blur-lg border-b border-gray-800 shadow-lg' : 'bg-transparent py-4'}`}>
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+          
+          {/* Logo Area / Back Button */}
+          <div className="flex items-center gap-3 shrink-0">
+            {hasData ? (
+              <button 
+                onClick={resetSearch} 
+                className="p-2 -ml-2 rounded-full hover:bg-gray-800 text-gray-400 hover:text-white transition-colors"
+                title="Back to Home"
+              >
+                <ArrowLeft size={24} />
+              </button>
+            ) : (
+              <div className="cursor-pointer" onClick={resetSearch}>
+                <Shield className="text-gold-500 fill-gold-500/20" size={28} />
+              </div>
+            )}
+            
+            <div className={`flex flex-col cursor-pointer ${hasData ? 'hidden md:flex' : 'flex'}`} onClick={resetSearch}>
               <h1 className="text-xl font-display font-bold tracking-wider text-white">SCOUT<span className="text-gold-500">AI</span></h1>
             </div>
           </div>
           
-          {/* Compact Search Bar (Visible only when results exist) */}
+          {/* Compact Search Bar (Visible on all screens when results exist) */}
           {hasData && (
-             <form onSubmit={(e) => handleSearch(e)} className="hidden md:flex flex-1 max-w-md mx-8">
+             <form onSubmit={(e) => handleSearch(e)} className="flex flex-1 max-w-md mx-auto md:mx-8">
               <div className="relative group w-full">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Scout another player..."
-                  className="w-full bg-gray-900 text-white border border-gray-700 rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-all"
+                  className="w-full bg-gray-900/80 text-white border border-gray-700 rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-all"
                   disabled={state.isLoading}
                 />
                 <Search className="absolute left-3 top-2.5 text-gray-500 group-focus-within:text-gold-500" size={16} />
@@ -74,7 +94,7 @@ const App: React.FC = () => {
             </form>
           )}
 
-          <div className="flex items-center gap-4">
+          <div className={`flex items-center gap-4 shrink-0 ${hasData ? 'hidden sm:flex' : 'flex'}`}>
              <a href="#" className="text-xs font-mono text-gray-500 hover:text-gold-500 transition-colors">V2.1</a>
           </div>
         </div>
